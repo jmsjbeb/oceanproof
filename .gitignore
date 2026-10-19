@@ -1,0 +1,29 @@
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Editors
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# Local env
+.env
+.env.local
+
+# Logs
+*.log
+npm-debug.log*
+
+# Video / heavy media (kept out of the code repo on purpose;
+# the demo video is distributed via the competition submission form)
+*.mp4
+*.mov
+_video/
+
+# Python caches (only if you run the helper scripts)
+__pycache__/
+*.py[cod]

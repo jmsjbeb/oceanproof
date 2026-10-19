@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#060c12">
+<title>海证 OceanProof · 海岸带核素溯源与生计风险预警</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="bgfx" aria-hidden="true"></div>
+
+<!-- ══════════ LOGIN ══════════ -->
+<section id="login" class="login">
+  <div class="login-visual">
+    <div class="lv-grid"></div>
+    <div class="lv-rings"><i></i><i></i><i></i><i></i></div>
+    <div class="lv-core"></div>
+    <div class="lv-label" style="--x:26%;--y:38%">福岛第一核电站</div>
+    <div class="lv-label" style="--x:62%;--y:52%">黑潮延伸体</div>
+    <div class="lv-label" style="--x:34%;--y:72%">东海陆架</div>
+    <div class="lv-label" style="--x:20%;--y:58%">浙闽沿岸</div>
+    <div class="lv-copy">
+      <p class="lv-kicker">ALPS TREATED WATER · DISPERSION LEDGER</p>
+      <h1>每一次排放，<br>都该有一份可核验的账本。</h1>
+      <p class="lv-sub">把三十年的排放计划，换算成你所在海岸的抵达时间、持续窗口与生计影响。</p>
+    </div>
+    <div class="lv-foot">
+      <span>2023.08.24 起 · 已进行 23 轮</span>
+      <span>累计约 18.1 万吨</span>
+    </div>
+  </div>
+
+  <div class="login-panel">
+    <div class="lp-inner">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 32 32" fill="none"><path d="M16 4.2c3.7 4.5 6.1 7.9 6.1 10.7a6.1 6.1 0 0 1-12.2 0c0-2.8 2.4-6.2 6.1-10.7Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M3.5 24.4c3.2 0 3.2-2 6.4-2s3.2 2 6.4 2 3.2-2 6.4-2 3.2 2 6.4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".6"/><path d="M3.5 28.4c3.2 0 3.2-2 6.4-2s3.2 2 6.4 2 3.2-2 6.4-2 3.2 2 6.4 2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" opacity=".32"/></svg>
+        </span>
+        <div>
+          <div class="brand-name">海证 <em>OceanProof</em></div>
+          <div class="brand-tag">海岸带核素溯源与生计风险预警</div>
+        </div>
+      </div>
+
+      <form id="loginForm" class="lp-form" autocomplete="off">
+        <h2>登录</h2>
+        <p class="lp-hint">输入任一邮箱即可进入演示环境，数据为公开监测与文献标定结果。</p>
+        <label class="field">
+          <span>邮箱</span>
+          <input id="email" type="text" value="demo@oceanproof.cn" spellcheck="false">
+        </label>
+        <label class="field">
+          <span>密码</span>
+          <input id="pass" type="password" value="oceanproof">
+        </label>
+        <button class="btn-primary" type="submit">进入我的海岸</button>
+        <button class="btn-ghost" type="button" id="guestBtn">以访客身份快速体验 →</button>
+        <div class="lp-legal">
+          本产品为科研与公共沟通用途，不构成食品安全或医疗结论。<br>
+          模型不确定性、数据来源与使用边界见「方法学」。
+        </div>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ══════════ APP ══════════ -->
+<div id="app" class="app hidden">
+  <aside class="side">
+    <div class="side-brand">
+      <span class="brand-mark sm" aria-hidden="true">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M16 4.2c3.7 4.5 6.1 7.9 6.1 10.7a6.1 6.1 0 0 1-12.2 0c0-2.8 2.4-6.2 6.1-10.7Z" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><path d="M3.5 24.4c3.2 0 3.2-2 6.4-2s3.2 2 6.4 2 3.2-2 6.4-2 3.2 2 6.4 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" opacity=".6"/></svg>
+      </span>
+      <div class="sb-txt"><b>海证</b><i>OceanProof</i></div>
+    </div>
+    <nav id="nav" class="nav"></nav>
+    <div class="side-foot">
+      <div class="sf-row"><span class="dot live"></span>监测数据同步中</div>
+      <div class="sf-row dim">第 23 轮排放 · 2026.08.31–09.18</div>
+      <button class="sf-btn" id="relocate">切换地点</button>
+    </div>
+  </aside>
+
+  <div class="main">
+    <header class="topbar">
+      <button class="locchip" id="locchip">
+        <svg viewBox="0 0 24 24" fill="none" class="ico"><path d="M12 21s7-5.6 7-11a7 7 0 1 0-14 0c0 5.4 7 11 7 11Z" stroke="currentColor" stroke-width="1.6"/><circle cx="12" cy="10" r="2.6" stroke="currentColor" stroke-width="1.6"/></svg>
+        <span id="locName">—</span>
+        <span class="locco" id="locCo">—</span>
+        <svg viewBox="0 0 24 24" fill="none" class="ico chev"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      </button>
+      <div class="topright">
+        <div class="pill"><span class="dot live"></span><span id="asof">数据截至 2026-10-18</span></div>
+        <div class="user" id="userChip">D</div>
+      </div>
+    </header>
+    <div id="view" class="view"></div>
+  </div>
+</div>
+
+<!-- ══════════ LOCATION MODAL ══════════ -->
+<div id="modal" class="modal hidden" role="dialog" aria-modal="true">
+  <div class="modal-card">
+    <button class="modal-x" id="modalX" aria-label="关闭">✕</button>
+    <h3>选择你的位置</h3>
+    <p class="mh">65 个精细点位带完整县域产业数据；也可搜索全国 3,237 个省 / 市 / 区县（行政区点位取省均值产业权重，界面上有标注）。</p>
+    <div class="search-wrap">
+      <svg viewBox="0 0 24 24" fill="none" class="ico"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+      <input id="locSearch" placeholder="搜索城市、县区，如 象山、舟山、慈溪、青羊" autocomplete="off">
+    </div>
+    <div class="quick" id="quickPick"></div>
+    <div class="loc-list" id="locList"></div>
+  </div>
+</div>
+
+<script src="data.js"></script>
+<script src="admin.js"></script>
+<script src="boundary.js"></script>
+<script src="land.js"></script>
+<script src="prices.js"></script>
+<script src="currents.js"></script>
+<script src="model.js"></script>
+<script src="atmos_f.js"></script>
+<script src="field.js"></script>
+<script src="flowmap.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
