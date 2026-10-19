@@ -4,7 +4,7 @@
 
 **一句话**：把三十年的福岛核处理水排放计划，换算成中国每一段海岸可核验的账本——什么时候到、能持续多久、鱼还安不安全。
 
-🌐 线上 Demo：https://oceanproof.pages.dev/
+🌐 线上 Demo：https://jmsjbeb.github.io/oceanproof/
 
 ---
 

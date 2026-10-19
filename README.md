@@ -4,7 +4,7 @@
 
 把三十年的核处理水排放计划，换算成每一段海岸可核验的账本：什么时候到、能持续多久、鱼还安不安全。
 
-🌐 **Live demo:** https://oceanproof.pages.dev/ *(GitHub Pages)*
+🌐 **Live demo:** https://jmsjbeb.github.io/oceanproof/ *(GitHub Pages)*
 📄 **Project statement:** [PROJECT_STATEMENT.md](docs/PROJECT_STATEMENT.md) · [Data & AI statement](docs/DATA_AI_STATEMENT.md) · [Validation plan](docs/VALIDATION_PLAN.md)
 🎬 **Demo video (174s):** [docs/](docs/) — Chinese narration, bilingual subtitles
 
