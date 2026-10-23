@@ -40,7 +40,7 @@ They sit side by side and are **never averaged into a single risk score** — do
 2. **Then the dose pathway.** A concentration field feeds a food-chain model (water → algae → fish), reported in millisievert on a log scale, using IAEA TRS-472 concentration factors and ICRP 72 dose coefficients.
 3. **Then the ledger.** Radiological result beside livelihood index — side by side, never merged.
 
-Coverage: **65 refined coastal sites** plus **3,237 administrative districts** nationwide, searchable by name.
+Coverage: **65 refined coastal sites** plus **3,241 administrative districts** nationwide, searchable by name.
 
 ## Honest uncertainty
 
@@ -63,12 +63,29 @@ Our calibration constant itself only carries **order-of-magnitude** meaning. The
 |---|---|---|
 | NOAA CoastWatch 0.25° currents | surface current field | measured |
 | NCEP/NCAR reanalysis | wind field | modeled |
-| DataV (Aliyun) | 3,237 administrative boundaries | public |
+| DataV (Aliyun) | 3,241 administrative boundaries | public |
 | IAEA / TEPCO discharge reports | release point & schedule | published |
 | IAEA TRS-472 | concentration factors | literature |
 | ICRP 72 | dose coefficients | literature |
 | UNSCEAR | background levels | literature |
 | Ministry of Agriculture | agricultural / food standards | published |
+
+## Data freshness
+
+The site is a **snapshot, not a live feed**. It issues zero network requests at runtime: every field is precomputed at build time and shipped as a `.js` file, which is why it works offline.
+
+Two consequences, both stated in the app:
+
+- The **arrival dates do not change day to day.** They come from three calibrated transport paths anchored to published literature (240 d China coast / 1200 d North America), not from today's current field. The time anchor (`days since 2023-08-24`) is computed in the browser, so the UI moves from "expected in N days" to "inside the impact window for N days" by itself.
+- What *does* age: wholesale prices, the ocean current field, and the discharge round counter. The in-app **Data Freshness** page lists every source with its date, refresh cadence, and the script that produces it — stale items turn amber, then purple, on their own.
+
+`tools/` contains the full pipeline (`fetch_currents.py`, `fetch_prices.py`, `track_atmos.py`, `fetch_mean_flow.py`, `build_manifest.py`). One command refreshes the snapshot:
+
+```bash
+python tools/refresh.py          # prices + currents + manifest + single-file build
+```
+
+Every step fails independently: if a source is unreachable, the previous file is kept and the site keeps working.
 
 ## Tech
 

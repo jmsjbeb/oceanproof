@@ -6,6 +6,8 @@
 <meta name="theme-color" content="#060c12">
 <title>海证 OceanProof · 海岸带核素溯源与生计风险预警</title>
 <link rel="stylesheet" href="styles.css">
+<link rel="manifest" href="manifest.json">
+<link rel="icon" type="image/png" sizes="192x192" href="icons/icon-192.png">
 </head>
 <body>
 <div class="bgfx" aria-hidden="true"></div>
@@ -76,7 +78,7 @@
     </div>
     <nav id="nav" class="nav"></nav>
     <div class="side-foot">
-      <div class="sf-row"><span class="dot live"></span>监测数据同步中</div>
+      <div class="sf-row"><span class="dot"></span>模型快照 · 非实时数据</div>
       <div class="sf-row dim">第 23 轮排放 · 2026.08.31–09.18</div>
       <button class="sf-btn" id="relocate">切换地点</button>
     </div>
@@ -91,7 +93,7 @@
         <svg viewBox="0 0 24 24" fill="none" class="ico chev"><path d="m7 10 5 5 5-5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
       </button>
       <div class="topright">
-        <div class="pill"><span class="dot live"></span><span id="asof">数据截至 2026-10-18</span></div>
+        <div class="pill" id="asofPill" title="查看各数据源的日期与生成脚本" style="cursor:pointer"><span class="dot"></span><span id="asof">数据时效</span></div>
         <div class="user" id="userChip">D</div>
       </div>
     </header>
@@ -104,7 +106,7 @@
   <div class="modal-card">
     <button class="modal-x" id="modalX" aria-label="关闭">✕</button>
     <h3>选择你的位置</h3>
-    <p class="mh">65 个精细点位带完整县域产业数据；也可搜索全国 3,237 个省 / 市 / 区县（行政区点位取省均值产业权重，界面上有标注）。</p>
+    <p class="mh">65 个精细点位带完整县域产业数据；也可搜索全国 3,241 个省 / 市 / 区县（行政区点位取省均值产业权重，界面上有标注）。</p>
     <div class="search-wrap">
       <svg viewBox="0 0 24 24" fill="none" class="ico"><circle cx="11" cy="11" r="6.5" stroke="currentColor" stroke-width="1.7"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
       <input id="locSearch" placeholder="搜索城市、县区，如 象山、舟山、慈溪、青羊" autocomplete="off">
@@ -122,8 +124,15 @@
 <script src="currents.js"></script>
 <script src="model.js"></script>
 <script src="atmos_f.js"></script>
+<script src="manifest-data.js"></script>
 <script src="field.js"></script>
 <script src="flowmap.js"></script>
 <script src="app.js"></script>
+<script>
+/* PWA：注册 Service Worker，安装后离线可用 */
+if ('serviceWorker' in navigator) {
+  navigator.serviceWorker.register('sw.js').catch(function () {});
+}
+</script>
 </body>
 </html>

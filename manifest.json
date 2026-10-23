@@ -1,0 +1,20 @@
+{
+  "id": "./",
+  "name": "海证 OceanProof · 海岸带核素溯源与生计风险预警",
+  "short_name": "海证",
+  "description": "输入你所在的区县，查核污染水抵达日期、海鲜剂量与生计影响。两本账，只给量级，每个数字有出处。",
+  "lang": "zh-CN",
+  "dir": "ltr",
+  "start_url": "./index.html",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#060c12",
+  "theme_color": "#060c12",
+  "categories": ["education", "utilities", "news"],
+  "icons": [
+    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any" },
+    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+  ]
+}

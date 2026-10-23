@@ -15,7 +15,8 @@
     evidence: '<path d="M11 4.5c4.5 0 8 3 8 7.5s-3.5 7.5-8 7.5-8-3-8-7.5 3.5-7.5 8-7.5Z" stroke="currentColor" stroke-width="1.6"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
     action: '<path d="M12 3v3M12 18v3M3 12h3M18 12h3" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/><circle cx="12" cy="12" r="4" stroke="currentColor" stroke-width="1.6"/>',
     method: '<path d="M6 3.5h9l4 4v13H6Z" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round"/><path d="M14.5 3.5v4.5H19M9 12h6M9 16h4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>',
-    brief: '<path d="M12 3.5 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8L6.7 20l1-6L3.4 9.9l6-.9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>'
+    brief: '<path d="M12 3.5 14.6 9l6 .9-4.3 4.2 1 6-5.3-2.8L6.7 20l1-6L3.4 9.9l6-.9Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/>',
+    clock: '<circle cx="12" cy="12" r="8.2" stroke="currentColor" stroke-width="1.6"/><path d="M12 7.4V12l3.3 2" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>'
   };
   var NAV = [
     { k: 'brief', n: '评审速览', i: 'brief' },
@@ -24,6 +25,7 @@
     { k: 'impact', n: '影响评估', i: 'impact' },
     { k: 'evidence', n: '监测证据', i: 'evidence' },
     { k: 'action', n: '行动建议', i: 'action' },
+    { k: 'data', n: '数据时效', i: 'clock' },
     { k: 'method', n: '方法学与试点', i: 'method' }
   ];
 
@@ -64,9 +66,10 @@
 
   /* 数据状态标签：实测 / 模型 / 估算 / 示意 */
   var PROV = {
-    obs:   ['实测', '公开监测或官方统计，可直接引用'],
+    obs:   ['实测', '公开监测或官方统计，引用需核对原始公告'],
     model: ['模型', '由筛选级模型推算，附误差范围'],
     est:   ['估算', '基于公开统计的权重估计，待替换'],
+    ref:   ['参照', '公开报道的量级参照，非本站实测'],
     schem: ['示意', '用于可视化，不构成结论']
   };
   function prov(k) {
@@ -116,6 +119,7 @@
     $('#guestBtn').addEventListener('click', enter);
     $('#locchip').addEventListener('click', openModal);
     $('#relocate').addEventListener('click', openModal);
+    $('#asofPill').addEventListener('click', function () { go('data'); });
     $('#modalX').addEventListener('click', closeModal);
     $('#modal').addEventListener('click', function (e) { if (e.target.id === 'modal') closeModal(); });
     $('#locSearch').addEventListener('input', function (e) { renderLocList(e.target.value); });
@@ -167,6 +171,7 @@
     else if (k === 'impact') v.innerHTML = viewImpact();
     else if (k === 'evidence') v.innerHTML = viewEvidence();
     else if (k === 'action') v.innerHTML = viewAction();
+    else if (k === 'data') v.innerHTML = viewData();
     else if (k === 'method') v.innerHTML = viewMethod();
     wire(k);
   }
@@ -175,8 +180,30 @@
     var c = state.loc;
     $('#locName').textContent = c.n + ' · ' + c.p;
     $('#locCo').textContent = c.lon.toFixed(2) + '°E  ' + c.lat.toFixed(2) + '°N';
-    $('#asof').textContent = '数据截至 ' + OP.META.asOf;
+    var a = mdOf('currents'), b = mdOf('prices');
+    $('#asof').textContent = (a && b)
+      ? '流场 ' + mmdd(a) + ' · 价格 ' + mmdd(b)
+      : '数据截至 ' + OP.META.asOf;
     try { localStorage.setItem('op.loc', c._key || c.n); } catch (e) {}
+  }
+
+  /* ══════════ 数据时效 ══════════
+     所有日期只有一个来源：manifest-data.js（由 tools/build_manifest.py 生成）。
+     界面上任何写死的日期都会漂移，所以这里不写死。 */
+  function mdOf(k) {
+    var m = OP.DATA_MANIFEST;
+    if (!m || !m.sources) return null;
+    for (var i = 0; i < m.sources.length; i++) {
+      if (m.sources[i].k === k) return m.sources[i].date;
+    }
+    return null;
+  }
+  function mmdd(d) { return d ? d.slice(5) : '—'; }
+  function daysAgo(d) {
+    if (!d) return null;
+    var t = Date.parse(d + 'T00:00:00+08:00');
+    if (!isFinite(t)) return null;
+    return Math.max(0, Math.round((Date.now() - t) / 86400000));
   }
 
   /* ══════════ 地点选择 ══════════ */
@@ -194,7 +221,7 @@
     setTimeout(function () { $('#locSearch').focus(); }, 80);
   }
   function closeModal() { $('#modal').classList.add('hidden'); }
-  /* ══════════ 行政区支持（3,237 个省/市/区县，阿里 DataV GeoAtlas 官方区划） ══════════
+  /* ══════════ 行政区支持（3,241 个省/市/区县，阿里 DataV GeoAtlas 官方区划） ══════════
      65 个精细点位有完整县域产业数据；行政区点位用省均值产业权重（标注估算）。
      ADMIN 行格式：[名称, 经度, 纬度, 级别, 所属省, 离海距离km(-1=缺测)] */
   var LV_CN = { province: '省级', city: '地级', district: '区县级' };
@@ -379,7 +406,7 @@
       '</p></div>' +
       '<div class="right"><span class="tag t-' + ph.c + '">' + ph.n + '</span>' +
       '<span class="tag t-dim">' + (a.inland ? '内陆 · 大气通路' : a.routeName) + '</span>' +
-      (state.loc._admin ? '<span class="tag t-rad" title="该点位为全国 3,237 行政区之一，产业权重取所属省均值（估算）">行政区 · 省均值权重</span>' : '') +
+      (state.loc._admin ? '<span class="tag t-rad" title="该点位为全国 3,241 行政区之一，产业权重取所属省均值（估算）">行政区 · 省均值权重</span>' : '') +
       '</div></div>' +
 
       '<div class="kpis">' +
@@ -1209,7 +1236,7 @@
       '</div>' +
 
       '<div class="grid" style="grid-template-columns:1.4fr 1fr;margin-bottom:16px">' +
-      '<div class="card pad0"><div class="card-h" style="padding:18px 20px 14px;margin:0"><h3>监测站读数</h3><span class="sub">' + prov('obs') + ' 公开监测量级</span></div>' +
+      '<div class="card pad0"><div class="card-h" style="padding:18px 20px 14px;margin:0"><h3>监测站读数</h3><span class="sub">' + prov('ref') + ' 公开报道量级参照</span></div>' +
       '<table><thead><tr><th>站点</th><th>坐标</th><th>氚 (Bq/L)</th><th>状态</th></tr></thead><tbody>' +
       OP.STATIONS.map(function (s) {
         var v = s.v === null ? '<span class="muted">—</span>' : s.v.toFixed(4);
@@ -1228,7 +1255,7 @@
        ['主要误差源', '涡旋扩散、季风季节变化、多轮叠加非线性'],
        ['验证状态', '与文献锚点一致；未做独立现场验证'],
        ['更新机制', '每轮排放结束后重算峰值，监测数据接入后做同化'],
-       ['版本', OP.META.version + ' · ' + OP.META.asOf],
+       ['版本', OP.META.version + ' · 数据截至 ' + (OP.DATA_MANIFEST ? OP.DATA_MANIFEST.asOf : OP.META.asOf)],
        ['安全边界', '不得用于食品安全判定、禁渔决策或医疗建议']]
         .map(function (r) {
           return '<div style="display:flex;gap:12px;font-size:11.5px;line-height:1.7"><span style="color:var(--dim);min-width:70px;flex:none">' + r[0] + '</span><span class="muted">' + r[1] + '</span></div>';
@@ -1365,6 +1392,100 @@
   }
 
   /* ══════════ 视图 6：方法学与试点 ══════════ */
+  /* ══════════ 数据时效 ══════════ */
+  function viewData() {
+    var DM = OP.DATA_MANIFEST || {
+      sources: [], asOf: OP.META.asOf, latest: OP.META.asOf, generatedAt: '—'
+    };
+    var KIND = {
+      snapshot: ['快照', '会过时'],
+      replay: ['回放', '固定场景'],
+      static: ['静态', '年度才变'],
+      manual: ['手写', '人工更新'],
+      model: ['标定', '不随日期变'],
+      estimate: ['估算', '年度才变']
+    };
+
+    function status(s) {
+      if (s.kind !== 'snapshot') {
+        return '<span class="tag t-dim">' + KIND[s.kind][0] + '</span>';
+      }
+      var n = daysAgo(s.date);
+      if (n === null) return '<span class="tag t-dim">—</span>';
+      var cls = n <= 7 ? 't-teal' : (n <= 30 ? 't-amber' : 't-rad');
+      return '<span class="tag ' + cls + '">' + n + ' 天前</span>';
+    }
+
+    var rows = DM.sources.map(function (s) {
+      return '<tr>' +
+        '<td><b>' + s.n + '</b>' +
+        '<div class="tiny" style="color:var(--dim);margin-top:4px;line-height:1.6">' + s.use + '</div></td>' +
+        '<td class="num">' + (s.date || s.dateText || '—') + '</td>' +
+        '<td class="num">' + s.value + '</td>' +
+        '<td>' + status(s) +
+        '<div class="tiny" style="color:var(--dim);margin-top:4px">' + s.freq + '</div></td>' +
+        '<td class="mono tiny" style="color:var(--mut)">' + s.tool + '</td>' +
+        '</tr>';
+    }).join('');
+
+    var nOld = daysAgo(DM.asOf), nNew = daysAgo(DM.latest);
+
+    return '<div class="phead"><div>' +
+      '<div class="eyebrow">DATA FRESHNESS · 数据时效</div>' +
+      '<h1 style="margin-top:8px">每个数字，都能查到哪天、从哪来、谁抓的</h1>' +
+      '<p>本站是<strong>快照</strong>，不是实时流。打开页面时不发任何网络请求——数据在构建阶段就算好、随页面一起下发。' +
+      '断网可用是这个选择的结果，不是数据会自己变新。</p>' +
+      '</div></div>' +
+
+      '<div class="kpis">' +
+      '<div class="kpi"><div class="k-lab">最旧快照</div>' +
+      '<div class="k-val">' + (nOld === null ? '—' : nOld) + '<small> 天前</small></div>' +
+      '<div class="k-note">' + (DM.asOf || '—') + ' · 口径取最旧</div></div>' +
+      '<div class="kpi"><div class="k-lab">最新快照</div>' +
+      '<div class="k-val">' + (nNew === null ? '—' : nNew) + '<small> 天前</small></div>' +
+      '<div class="k-note">' + (DM.latest || '—') + '</div></div>' +
+      '<div class="kpi"><div class="k-lab">清单生成</div>' +
+      '<div class="k-val" style="font-size:22px">' + (DM.generatedAt || '—').slice(5, 16).replace('T', ' ') + '</div>' +
+      '<div class="k-note">tools/build_manifest.py</div></div>' +
+      '</div>' +
+
+      '<div class="card pad0" style="margin-bottom:16px">' +
+      '<div class="card-h" style="padding:18px 20px 14px;margin:0">' +
+      '<h3>数据源清单</h3><span class="sub">' + DM.sources.length + ' 个来源 · 按影响范围排序</span></div>' +
+      '<table><thead><tr><th>数据</th><th>数据日期</th><th>当前值</th><th>状态</th><th>生成脚本</th></tr></thead>' +
+      '<tbody>' + rows + '</tbody></table>' +
+      '<p class="tiny" style="padding:14px 20px;line-height:1.8">' +
+      '「天前」按你打开页面的时刻算，所以这份清单会自己变旧——这正是它存在的意义：' +
+      '数字过期时，它会明说，而不是假装还新。</p></div>' +
+
+      '<div class="grid" style="grid-template-columns:1fr 1fr">' +
+      '<div class="card"><div class="card-h"><h3>三类数据，三种命运</h3><span class="sub">WHY NOT REAL-TIME</span></div>' +
+      '<div style="display:flex;flex-direction:column;gap:14px;font-size:11.5px;line-height:1.8">' +
+      '<div><b style="color:var(--teal)">快照</b>：流场、批发价。源站是日频，重抓就能变新。' +
+      '这两项是「过时感」的主要来源，也是唯一值得上定时任务的。</div>' +
+      '<div><b style="color:var(--purple)">回放</b>：大气风场是 2023-08 至 2024-10 的历史场，' +
+      '用来还原「水汽从哪来」。它不是今天的天气，也不该每天变。</div>' +
+      '<div><b style="color:var(--mut)">常量与标定</b>：排放轮次、抵达天数、产业权重。' +
+      '前两个来自公告与文献锚点，第三个是估算——都不随时间漂移，但需要人工核对。</div>' +
+      '</div></div>' +
+
+      '<div class="card"><div class="card-h"><h3>怎么刷新</h3><span class="sub">REPRODUCE</span></div>' +
+      '<div class="eq" style="font-size:11px;line-height:2">' +
+      'python tools/refresh.py<br>' +
+      '<span style="color:var(--dim)"># 等价于依次执行：</span><br>' +
+      'python tools/fetch_currents.py<br>' +
+      'python tools/fetch_prices.py<br>' +
+      'python tools/build_manifest.py<br>' +
+      'python tools/inline_single.py' +
+      '</div>' +
+      '<p class="tiny" style="margin-top:12px;line-height:1.8">' +
+      '抓取脚本只读公开数据源，不绕过登录、不高频请求。' +
+      '刷新后本页的日期会自动跟着变——因为日期是从数据文件里读的，不是手写的。' +
+      '批发价源站在境外网络下可能被拦，抓不到就保留上一份，不会把站点弄坏。</p></div>' +
+      '</div>' +
+      '</div>';
+  }
+
   function viewMethod() {
     return '<div class="phead"><div>' +
       '<div class="eyebrow">METHOD &amp; PILOT · 方法学与验证计划</div>' +
