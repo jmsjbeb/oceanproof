@@ -6,6 +6,7 @@
   2. fetch_prices.py     农业农村部批发价   → prices.js
   3. build_manifest.py   从数据文件里读出日期 → manifest-data.js
   4. inline_single.py    重新内联单文件离线版
+  5. build_miniapp_data.py  重新生成小程序数据层（miniapp/data/）
 
 不做的：大气追踪（60 万粒子，跑一次几十分钟，且源是 2023-08→2024-10 的历史场）、
 抵达天数重算（季节级任务，用 fetch_mean_flow.py）。
@@ -65,6 +66,9 @@ def main():
 
     print("\n[4] 单文件离线版")
     results.append(run("单文件", "inline_single.py"))
+
+    print("\n[5] 小程序数据层")
+    results.append(run("小程序", "build_miniapp_data.py"))
 
     print("\n" + "=" * 46)
     for name, st, dt in results:
